@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>德语学习播客订阅 - 2026验证有效</title>
+    <dateCreated>Mon, 16 Feb 2026 21:40:00 +0000</dateCreated>
+  </head>
+  <body>
+    <outline text="DW - Langsam gesprochene Nachrichten" type="rss" xmlUrl="https://rss.dw.com/xml/dkpodcast_lgn_de" description="德国之声慢速新闻，专为德语学习者设计"/>
+    <outline text="tagesschau - 15 Minuten Podcast" type="rss" xmlUrl="https://www.tagesschau.de/multimedia/podcast/15-minuten/podcast-15-minuten-feed-100.html" description="每日15分钟新闻播客"/>
+    <outline text="tagesschau - 11KM Podcast" type="rss" xmlUrl="https://www.tagesschau.de/multimedia/podcast/11km/11km-feed-100.html" description="ARD记者深度调查报道"/>
+    <outline text="ZDF logo! - Kinder Nachrichten" type="rss" xmlUrl="https://www.zdf.de/kinder/logo/logo-podcast-100.xml" description="儿童新闻，简单易懂"/>
+  </body>
+</opml>

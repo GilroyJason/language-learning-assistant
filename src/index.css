@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0b0b0c] min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-german-red text-white rounded-lg font-semibold
+           hover:bg-red-700 transition-all duration-200 shadow-md
+           hover:shadow-lg active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold
+           hover:bg-gray-300 transition-all duration-200 shadow-md
+           hover:shadow-lg active:scale-95;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6 backdrop-blur-sm
+           bg-opacity-90 border border-gray-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+           focus:border-german-gold focus:outline-none transition-colors
+           text-lg;
+  }
+}
+
+.german-gradient {
+  background: linear-gradient(to bottom, #000 33.33%, #DD0000 33.33%, #DD0000 66.66%, #FFCE00 66.66%);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(221, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(221, 0, 0, 0.8);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

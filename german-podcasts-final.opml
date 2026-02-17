@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>German Learning Podcasts</title>
+  </head>
+  <body>
+    <outline text="Slow German" type="rss" xmlUrl="https://slowgerman.com/feed/podcast"/>
+    <outline text="DW Langsam gesprochene Nachrichten" type="rss" xmlUrl="https://rss.dw.com/xml/dkpodcast_lgn_de"/>
+  </body>
+</opml>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>德语学习播客 - 可用RSS源</title>
+    <dateCreated>Mon, 16 Feb 2026 22:00:00 +0000</dateCreated>
+  </head>
+  <body>
+    <outline text="DW - Langsam gesprochene Nachrichten" type="rss" xmlUrl="https://rss.dw.com/xml/dkpodcast_lgn_de" description="德国之声慢速新闻，专为德语学习者设计"/>
+    <outline text="DW - Spezial" type="rss" xmlUrl="https://rss.dw.com/xml/dkpodcast_spezial_de" description="DW专题报道"/>
+    <outline text="DW - Campus & Karriere" type="rss" xmlUrl="https://rss.dw.com/xml/dkpodcast_campus_de" description="德国大学生活"/>
+    <outline text="ZDF logo! - Kinder Nachrichten" type="rss" xmlUrl="https://www.zdf.de/rss/podcast/audio/zdf/kinder/logo" description="ZDF儿童新闻"/>
+  </body>
+</opml>

@@ -1,0 +1,13 @@
+.DS_Store
+.vs
+node_modules
+dist
+downloads
+practice-sets
+public/audio-downloads
+*.log
+*.tmp
+*.bak
+*.sqlite
+*.db
+.env

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>德语学习播客订阅</title>
+    <dateCreated>Mon, 16 Feb 2026 21:30:00 +0000</dateCreated>
+  </head>
+  <body>
+    <outline text="Tageschau in 100 Sekunden" type="rss" xmlUrl="https://www.tagesschau.de/export/video-podcast/webl/tageschau-in-100-sekunden/webl/high/" description="德国官方新闻，每天100秒"/>
+    <outline text="DW - Langsam gesprochene Nachrichten" type="rss" xmlUrl="https://rss.dw.com/xml/podcast-spitze-geht-die-scheibe-100" description="德国之声慢速新闻，专为德语学习者设计"/>
+    <outline text="Markus Lanz" type="rss" xmlUrl="https://www.ndr.de/fernsehen/sendungen/markus_lanz/markuslaz157-podcast.xml" description="知名访谈节目"/>
+    <outline text="Logo! - Kinder-nachrichten" type="rss" xmlUrl="https://www.zdf.de/rss/zdf/logo/logo?podName=logo" description="儿童新闻，简单易懂"/>
+  </body>
+</opml>
