@@ -1,7 +1,18 @@
 # Language Learning Assistant
 
-Local podcast dictation tool for German and English. It downloads podcast audio via gPodder, generates subtitles with Whisper, splits sentences into practice sets, and provides a Spotify-like UI for study and review.  
-Open-source, local-only, and designed for safe personal learning.
+Local-first podcast dictation tool for German and English.  
+It fetches audio via gPodder, generates subtitles with Whisper, splits into sentence practice sets, and delivers a Spotify‑style UI for study and review.
+
+**Status:** Active • **Platform:** Windows (primary) • **Mode:** Local-only • **License:** MIT
+
+---
+
+## Highlights
+- Podcast-based dictation with sentence-level audio playback
+- Auto pipeline: gPodder → Whisper → practice sets
+- Language isolation (DE/EN) with manual source mapping
+- Favorites-based review mode
+- Local storage only, no cloud
 
 ## Features
 - Podcast-based dictation practice with sentence segmentation
@@ -17,22 +28,22 @@ Open-source, local-only, and designed for safe personal learning.
 - FFmpeg (Windows)
 
 ## Quick Start
-1. Install Node dependencies:
+1. Install dependencies:
    - `npm install`
 2. Start backend:
    - `npm run server`
 3. Start frontend:
    - `npm run dev`
-4. Open app:
+4. Open:
    - `http://localhost:3000`
 
 ## Workflow (Subscribe → Download → Practice)
-1. Subscribe RSS in gPodder (per language):
-   - Use the app "订阅RSS" button in the Tools card.
-2. Update practice sets:
-   - Use the app "更新题库" button.
-3. Practice in the UI:
-   - Start Learning -> choose source -> practice.
+1. Subscribe RSS in gPodder (per language).
+   - Use the app “订阅RSS” button in Tools.
+2. Update practice sets.
+   - Use “更新题库” in Tools.
+3. Practice:
+   - Start Learning → choose source → practice.
 
 ## Language Isolation
 Language is determined by `practice-sets/.language-map.json`.
@@ -49,6 +60,11 @@ Example:
 If a new podcast is added and not in the map, generation fails until you manually categorize it in the UI:
 - Home -> Tools -> 管理音源 -> set language -> 保存设置
 
+## Local Data and Privacy
+- Local-only by design. No cloud storage.
+- Practice sets are generated on your machine.
+- User state stored in `practice-sets/.state.json`.
+
 ## Agent Support (for Codex/AI Assistants)
 This repo includes `AGENTS.md` with strict rules for safe edits.  
 If you are using an AI agent:
@@ -57,10 +73,6 @@ If you are using an AI agent:
 3. Keep changes inside `src/` or the known scripts.
 4. Avoid deleting user data or `practice-sets/`.
 5. Prefer local, non-destructive operations.
-
-## Local Data and Privacy
-- This project runs locally. No data is sent to external servers.
-- Practice sets are generated on your machine.
 
 ## Scripts
 These are invoked by the frontend Tools card:
@@ -73,6 +85,14 @@ These are invoked by the frontend Tools card:
 - Practice sets: `practice-sets/`
 - User state: `practice-sets/.state.json`
 - Language map: `practice-sets/.language-map.json`
+
+## .gitignore Notes (Why GitHub has fewer folders)
+The repository excludes local data to keep it clean and portable:
+- `practice-sets/` (generated content)
+- `downloads/` and gPodder downloads
+- `node_modules/`, `dist/`
+
+These are regenerated locally and **not required** for running the project.
 
 ## Troubleshooting
 - gPodder database locked:
