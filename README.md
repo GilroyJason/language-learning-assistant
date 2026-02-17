@@ -1,25 +1,58 @@
 # Language Learning Assistant
 
-Local-first podcast dictation tool for German and English.  
-It fetches audio via gPodder, generates subtitles with Whisper, splits into sentence practice sets, and delivers a Spotify‑style UI for study and review.
+Local‑first podcast dictation for German and English.  
+Fetch audio with gPodder, generate subtitles with Whisper, split into sentence‑level practice sets, and study in a Spotify‑style UI.
 
-**Status:** Active • **Platform:** Windows (primary) • **Mode:** Local-only • **License:** MIT
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Platform](https://img.shields.io/badge/Platform-Windows-1f6feb)
+![Mode](https://img.shields.io/badge/Mode-Local--only-111111)
+![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61dafb)
 
 ---
 
+## Table of Contents
+- Overview
+- Highlights
+- Features
+- Architecture
+- Requirements
+- Quick Start
+- Workflow (Subscribe → Download → Practice)
+- Language Isolation & Source Mapping
+- Known Issues & Workarounds
+- Faster ASR Options
+- Scripts
+- Data & Privacy
+- Repository Notes
+- Agent Support
+- License
+- Open Source & Takedown
+
+---
+
+## Overview
+This project turns podcasts into sentence‑level dictation exercises. It is **local‑only** and runs entirely on your machine.
+
 ## Highlights
-- Podcast-based dictation with sentence-level audio playback
-- Auto pipeline: gPodder → Whisper → practice sets
-- Language isolation (DE/EN) with manual source mapping
-- Favorites-based review mode
-- Local storage only, no cloud
+- Podcast → subtitle → sentence practice pipeline
+- German + English modes with strict data isolation
+- Sentence‑level audio playback and answer reveal shortcuts
+- Favorites‑based review mode
 
 ## Features
-- Podcast-based dictation practice with sentence segmentation
 - Practice set selector by source and language
-- Favorites-based review mode
-- Local-only workflow (no cloud)
-- German and English modes (data isolated)
+- Sentence builder (listen → type → verify)
+- Favorites‑based review
+- Local storage and privacy‑first design
+
+## Architecture
+```
+[gPodder RSS] → [Audio Download] → [Whisper Subtitles]
+                        ↓
+               [Sentence Practice Sets]
+                        ↓
+             [Start Learning / Review]
+```
 
 ## Requirements
 - Node.js 18+
@@ -28,25 +61,26 @@ It fetches audio via gPodder, generates subtitles with Whisper, splits into sent
 - FFmpeg (Windows)
 
 ## Quick Start
-1. Install dependencies:
+1. Install dependencies
    - `npm install`
-2. Start backend:
+2. Start backend
    - `npm run server`
-3. Start frontend:
+3. Start frontend
    - `npm run dev`
-4. Open:
+4. Open
    - `http://localhost:3000`
 
 ## Workflow (Subscribe → Download → Practice)
-1. Subscribe RSS in gPodder (per language).
-   - Use the app “订阅RSS” button in Tools.
-2. Update practice sets.
-   - Use “更新题库” in Tools.
-3. Practice:
-   - Start Learning → choose source → practice.
+1. Subscribe RSS (per language) in gPodder
+   - Use the app “订阅RSS” button
+2. Update practice sets
+   - Use “更新题库” in Tools
+3. Start Learning
+   - Choose a source → practice
 
-## Language Isolation
-Language is determined by `practice-sets/.language-map.json`.
+## Language Isolation & Source Mapping
+Language is controlled by `practice-sets/.language-map.json`.
+
 Example:
 ```json
 {
@@ -57,53 +91,54 @@ Example:
 }
 ```
 
-If a new podcast is added and not in the map, generation fails until you manually categorize it in the UI:
-- Home -> Tools -> 管理音源 -> set language -> 保存设置
+If a new podcast folder is found but not mapped, generation will stop and prompt you to categorize it:
+- Home → Tools → 管理音源 → set language → 保存设置
 
-## Local Data and Privacy
-- Local-only by design. No cloud storage.
-- Practice sets are generated on your machine.
-- User state stored in `practice-sets/.state.json`.
+## Known Issues & Workarounds
+### Initial subscription downloads too many episodes
+When a new RSS feed is added, gPodder may mark a batch of historical episodes as “new”, so the first update can download **many** files. On CPU‑based Whisper this makes subtitle generation very slow.
 
-## Agent Support (for Codex/AI Assistants)
-This repo includes `AGENTS.md` with strict rules for safe edits.  
-If you are using an AI agent:
-1. Read `AGENTS.md` first.
-2. Do not modify `vite.config.js`, `tailwind.config.js`, or `.env` unless explicitly requested.
-3. Keep changes inside `src/` or the known scripts.
-4. Avoid deleting user data or `practice-sets/`.
-5. Prefer local, non-destructive operations.
+**Workarounds**
+1. Manually download only the single episode you want, then run “更新题库”.
+2. Keep `limit.episodes = 1` in gPodder settings, avoid bulk downloads.
+3. Consider a faster ASR backend (see below).
+
+## Faster ASR Options
+If Whisper on CPU is too slow, consider swapping the backend (not integrated by default):
+- **[faster‑whisper](https://github.com/SYSTRAN/faster-whisper)** (CTranslate2; faster + lower memory; supports quantization)
+- **[whisper.cpp](https://github.com/ggml-org/whisper.cpp)** (C/C++; quantized models; efficient on CPU)
 
 ## Scripts
-These are invoked by the frontend Tools card:
+Invoked by the frontend Tools card:
 - `auto-daily-de.bat` (German update)
 - `auto-daily-en.bat` (English update)
 - `subscribe-german.bat`
 - `subscribe-english.bat`
 
-## Data Storage
-- Practice sets: `practice-sets/`
-- User state: `practice-sets/.state.json`
-- Language map: `practice-sets/.language-map.json`
+## Data & Privacy
+- Local‑only by design (no cloud storage)
+- Practice sets stored in `practice-sets/`
+- User state in `practice-sets/.state.json`
 
-## .gitignore Notes (Why GitHub has fewer folders)
-The repository excludes local data to keep it clean and portable:
-- `practice-sets/` (generated content)
+## Repository Notes
+### Why GitHub shows fewer folders
+The repository intentionally excludes generated and local data:
+- `practice-sets/`
 - `downloads/` and gPodder downloads
 - `node_modules/`, `dist/`
 
 These are regenerated locally and **not required** for running the project.
 
-## Troubleshooting
-- gPodder database locked:
-  - Close gPodder and retry update.
-- Unknown sources in list:
-  - Use Home -> 管理音源 -> map unknown source to a real gPodder source.
+## Agent Support
+This repo includes `AGENTS.md` with strict safe‑edit rules for AI agents.
+If you use an AI assistant:
+1. Read `AGENTS.md` first.
+2. Keep changes inside `src/` or known scripts unless asked.
+3. Avoid deleting user data or `practice-sets/`.
 
-## Open Source and Takedown
-This project is open-source for learning and personal use.  
-If any content is believed to be infringing, please open an issue or contact the maintainer for prompt removal.
+## License
+MIT (see `LICENSE`).
 
-## Notes
-- This project is local-only by design.
-- Practice sets are generated from downloaded audio and stored locally.
+## Open Source & Takedown
+This project is open‑source for learning and personal use.
+If any content is believed to be infringing, open an issue or contact the maintainer for prompt removal.
