@@ -13,7 +13,7 @@ function PracticeSetSelector({ onSelectSet, onBack, language }) {
     sourceList: isEnglishText ? 'Sources' : '音源列表',
     refresh: isEnglishText ? 'Refresh' : '刷新',
     loading: isEnglishText ? 'Loading...' : '加载中...',
-    noSets: isEnglishText ? 'No practice sets found. Run generate-subtitles.py first.' : '没有找到练习集。请先运行 `generate-subtitles.py` 生成练习集。',
+    noSets: isEnglishText ? 'No practice sets found. Run scripts/generate-subtitles.py first.' : '没有找到练习集。请先运行 `scripts/generate-subtitles.py` 生成练习集。',
     selectHint: isEnglishText ? 'Open this channel' : '选择进入该频道的练习集',
     channelSets: isEnglishText ? 'Practice sets' : '练习集',
     hideListened: isEnglishText ? 'Hide listened' : '隐藏已听',
@@ -286,3 +286,4 @@ function PracticeSetSelector({ onSelectSet, onBack, language }) {
 }
 
 export default PracticeSetSelector
+

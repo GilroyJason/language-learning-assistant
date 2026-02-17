@@ -648,12 +648,12 @@ app.post('/api/scripts/run', (req, res) => {
   try {
     const { name } = req.body || {}
     const allowed = {
-      'auto-daily': path.join(__dirname, 'auto-daily.bat'),
-      'auto-daily-de': path.join(__dirname, 'auto-daily-de.bat'),
-      'auto-daily-en': path.join(__dirname, 'auto-daily-en.bat'),
-      'subscribe-now': path.join(__dirname, 'subscribe-now.bat'),
-      'subscribe-de': path.join(__dirname, 'subscribe-german.bat'),
-      'subscribe-en': path.join(__dirname, 'subscribe-english.bat')
+      'auto-daily': path.join(__dirname, 'scripts', 'bat', 'auto-daily.bat'),
+      'auto-daily-de': path.join(__dirname, 'scripts', 'bat', 'auto-daily-de.bat'),
+      'auto-daily-en': path.join(__dirname, 'scripts', 'bat', 'auto-daily-en.bat'),
+      'subscribe-now': path.join(__dirname, 'scripts', 'bat', 'subscribe-now.bat'),
+      'subscribe-de': path.join(__dirname, 'scripts', 'bat', 'subscribe-german.bat'),
+      'subscribe-en': path.join(__dirname, 'scripts', 'bat', 'subscribe-english.bat')
     }
 
     if (!name || !allowed[name]) {
@@ -713,3 +713,4 @@ app.listen(PORT, () => {
    3. 选择音频开始学习
   `)
 })
+

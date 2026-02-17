@@ -1,4 +1,4 @@
-# Language Learning Assistant
+# 🤖 Language Learning Assistant
 
 Local‑first podcast dictation for German and English.  
 Fetch audio with gPodder, generate subtitles with Whisper, split into sentence‑level practice sets, and study in a Spotify‑style UI.
@@ -43,6 +43,7 @@ This project turns podcasts into sentence‑level dictation exercises. It is **l
 | User Guide | `docs/guides/USER_GUIDE.md` |
 | Integration | `docs/guides/INTEGRATION-GUIDE.md` |
 | Architecture & Reports | `docs/reports/` |
+| Downloads & FFmpeg | `scripts/downloads/` |
 
 ## Highlights
 - Podcast → subtitle → sentence practice pipeline
@@ -121,22 +122,20 @@ If Whisper on CPU is too slow, consider swapping the backend (not integrated by 
 
 ## Scripts
 Invoked by the frontend Tools card:
-- `auto-daily-de.bat` (German update)
-- `auto-daily-en.bat` (English update)
-- `subscribe-german.bat`
-- `subscribe-english.bat`
+- `scripts/bat/auto-daily-de.bat` (German update)
+- `scripts/bat/auto-daily-en.bat` (English update)
+- `scripts/bat/subscribe-german.bat`
+- `scripts/bat/subscribe-english.bat`
 
 ## Repo Layout
 ```
 .
 ├── src/                 # Frontend (React)
 ├── public/              # Static assets
-├── scripts/             # Helper scripts (optional)
+├── scripts/             # All scripts (bat/py/tools)
 ├── server.mjs           # Backend API
-├── generate-subtitles.py
-├── auto-daily-*.bat      # Update scripts
-├── subscribe-*.bat       # RSS subscription scripts
-└── docs/                 # Guides and reports
+├── scripts/generate-subtitles.py
+└── docs/                # Guides and reports
 ```
 
 ## Docs
@@ -146,7 +145,7 @@ Guides:
 - `docs/guides/QUICKSTART.md`
 - `docs/guides/USER_GUIDE.md`
 - `docs/guides/INTEGRATION-GUIDE.md`
-- `docs/guides/DOWNLOAD-GUIDE.md`
+- `docs/guides/SENTENCE_BUILDER_GUIDE.md`
 
 Reports and notes:
 - `docs/reports/PROJECT_SUMMARY.md`
