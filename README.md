@@ -12,6 +12,7 @@ Fetch audio with gPodder, generate subtitles with Whisper, split into sentence�
 
 ## Table of Contents
 - Overview
+- Key Links
 - Highlights
 - Features
 - Architecture
@@ -22,6 +23,8 @@ Fetch audio with gPodder, generate subtitles with Whisper, split into sentence�
 - Known Issues & Workarounds
 - Faster ASR Options
 - Scripts
+- Repo Layout
+- Docs
 - Data & Privacy
 - Repository Notes
 - Agent Support
@@ -32,6 +35,14 @@ Fetch audio with gPodder, generate subtitles with Whisper, split into sentence�
 
 ## Overview
 This project turns podcasts into sentence‑level dictation exercises. It is **local‑only** and runs entirely on your machine.
+
+## Key Links
+| Topic | Location |
+| --- | --- |
+| Quick Start | `docs/guides/QUICKSTART.md` |
+| User Guide | `docs/guides/USER_GUIDE.md` |
+| Integration | `docs/guides/INTEGRATION-GUIDE.md` |
+| Architecture & Reports | `docs/reports/` |
 
 ## Highlights
 - Podcast → subtitle → sentence practice pipeline
@@ -114,6 +125,33 @@ Invoked by the frontend Tools card:
 - `auto-daily-en.bat` (English update)
 - `subscribe-german.bat`
 - `subscribe-english.bat`
+
+## Repo Layout
+```
+.
+├── src/                 # Frontend (React)
+├── public/              # Static assets
+├── scripts/             # Helper scripts (optional)
+├── server.mjs           # Backend API
+├── generate-subtitles.py
+├── auto-daily-*.bat      # Update scripts
+├── subscribe-*.bat       # RSS subscription scripts
+└── docs/                 # Guides and reports
+```
+
+## Docs
+Project docs have been grouped under `docs/` to keep the root clean.
+
+Guides:
+- `docs/guides/QUICKSTART.md`
+- `docs/guides/USER_GUIDE.md`
+- `docs/guides/INTEGRATION-GUIDE.md`
+- `docs/guides/DOWNLOAD-GUIDE.md`
+
+Reports and notes:
+- `docs/reports/PROJECT_SUMMARY.md`
+- `docs/reports/CHANGELOG.md`
+- `docs/notes/AUTO-SYSTEM.md`
 
 ## Data & Privacy
 - Local‑only by design (no cloud storage)
