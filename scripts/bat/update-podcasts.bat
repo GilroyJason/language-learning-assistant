@@ -1,8 +1,7 @@
 @echo off
 setlocal
-set ROOT_DIR=D:\german-learning-assistant
+call "%~dp0_env.bat"
 
-REM Update podcasts using gPodder (update list)
-"D:\gpodder\gpodder.exe" --update
+"%GPO_EXE%" update
 
 endlocal

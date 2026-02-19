@@ -1,8 +1,7 @@
 @echo off
 setlocal
-set ROOT_DIR=D:\german-learning-assistant
+call "%~dp0_env.bat"
 
-REM Import RSS list into gPodder (all)
-"D:\gpodder\gpodder.exe" --subscribe "%ROOT_DIR%\scripts\rss\rss-urls-final.txt"
+"%GPODDER_CMD_EXE%" --subscribe "%ROOT_DIR%\scripts\rss\rss-urls-final.txt"
 
 endlocal
