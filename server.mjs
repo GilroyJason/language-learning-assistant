@@ -644,52 +644,89 @@ app.get('/health', (req, res) => {
 })
 
 // API: 运行本地脚本（仅允许白名单）
+const scriptRegistry = {
+  'auto-daily': path.join(__dirname, 'scripts', 'bat', 'auto-daily.bat'),
+  'auto-daily-de': path.join(__dirname, 'scripts', 'bat', 'auto-daily-de.bat'),
+  'auto-daily-en': path.join(__dirname, 'scripts', 'bat', 'auto-daily-en.bat'),
+  'subscribe-now': path.join(__dirname, 'scripts', 'bat', 'subscribe-now.bat'),
+  'subscribe-de': path.join(__dirname, 'scripts', 'bat', 'subscribe-german.bat'),
+  'subscribe-en': path.join(__dirname, 'scripts', 'bat', 'subscribe-english.bat')
+}
+
+const scriptRuns = new Map()
+
+function runScriptAsync(name) {
+  const scriptPath = scriptRegistry[name]
+  if (!scriptPath) return { error: 'invalid script name' }
+  if (!fs.existsSync(scriptPath)) return { error: 'script not found' }
+
+  const runId = `${name}-${Date.now()}`
+  const child = spawn('cmd.exe', ['/c', scriptPath], {
+    cwd: __dirname,
+    windowsHide: true
+  })
+
+  const state = {
+    runId,
+    name,
+    status: 'running',
+    startedAt: Date.now(),
+    output: [],
+    errorOutput: [],
+    exitCode: null
+  }
+  scriptRuns.set(runId, state)
+
+  const pushOutput = (arr, data) => {
+    const text = data.toString()
+    text.split(/\r?\n/).forEach(line => {
+      if (line.trim() !== '') {
+        arr.push(line)
+      }
+    })
+  }
+
+  child.stdout.on('data', (data) => pushOutput(state.output, data))
+  child.stderr.on('data', (data) => pushOutput(state.errorOutput, data))
+
+  child.on('close', (code) => {
+    state.status = code === 0 ? 'success' : 'failed'
+    state.exitCode = code
+    state.endedAt = Date.now()
+  })
+
+  return { runId }
+}
+
 app.post('/api/scripts/run', (req, res) => {
   try {
     const { name } = req.body || {}
-    const allowed = {
-      'auto-daily': path.join(__dirname, 'scripts', 'bat', 'auto-daily.bat'),
-      'auto-daily-de': path.join(__dirname, 'scripts', 'bat', 'auto-daily-de.bat'),
-      'auto-daily-en': path.join(__dirname, 'scripts', 'bat', 'auto-daily-en.bat'),
-      'subscribe-now': path.join(__dirname, 'scripts', 'bat', 'subscribe-now.bat'),
-      'subscribe-de': path.join(__dirname, 'scripts', 'bat', 'subscribe-german.bat'),
-      'subscribe-en': path.join(__dirname, 'scripts', 'bat', 'subscribe-english.bat')
+    const result = runScriptAsync(name)
+    if (result.error) {
+      return res.status(400).json({ error: result.error })
     }
-
-    if (!name || !allowed[name]) {
-      return res.status(400).json({ error: 'invalid script name' })
-    }
-
-    const scriptPath = allowed[name]
-    if (!fs.existsSync(scriptPath)) {
-      return res.status(404).json({ error: 'script not found' })
-    }
-
-    const child = spawn('cmd.exe', ['/c', scriptPath], {
-      cwd: __dirname,
-      windowsHide: true
-    })
-
-    let output = ''
-    let errorOutput = ''
-    child.stdout.on('data', (data) => {
-      output += data.toString()
-    })
-    child.stderr.on('data', (data) => {
-      errorOutput += data.toString()
-    })
-
-    child.on('close', (code) => {
-      res.json({
-        success: code === 0,
-        code,
-        output,
-        errorOutput
-      })
-    })
+    return res.json({ success: true, runId: result.runId })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
+})
+
+app.get('/api/scripts/status/:runId', (req, res) => {
+  const { runId } = req.params
+  const state = scriptRuns.get(runId)
+  if (!state) {
+    return res.status(404).json({ error: 'run not found' })
+  }
+  return res.json({
+    runId: state.runId,
+    name: state.name,
+    status: state.status,
+    startedAt: state.startedAt,
+    endedAt: state.endedAt || null,
+    output: state.output.slice(-200),
+    errorOutput: state.errorOutput.slice(-200),
+    exitCode: state.exitCode
+  })
 })
 
 app.listen(PORT, () => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 function QuickStart({ onStartLearning, onStartReview, language }) {
@@ -59,6 +59,8 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
     date: new Date().toDateString()
   })
   const [scriptStatus, setScriptStatus] = useState({ running: false, message: '' })
+  const [scriptLog, setScriptLog] = useState([])
+  const pollRef = useRef(null)
   const [showMapping, setShowMapping] = useState(false)
   const [mappingSources, setMappingSources] = useState([])
   const [mappingMap, setMappingMap] = useState({})
@@ -112,11 +114,25 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
     }
   }, [storagePrefix])
 
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current)
+        pollRef.current = null
+      }
+    }
+  }, [])
+
   const todayProgress = dailyGoal.sets > 0
     ? (dailyGoal.completedSets / dailyGoal.sets) * 100
     : 0
 
   const runScript = async (name) => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current)
+      pollRef.current = null
+    }
+    setScriptLog([])
     setScriptStatus({ running: true, message: isEnglishText ? 'Running...' : '正在执行...' })
     try {
       const res = await fetch('http://localhost:3001/api/scripts/run', {
@@ -125,17 +141,39 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
         body: JSON.stringify({ name })
       })
       const data = await res.json()
-      if (data.success) {
-        setScriptStatus({ running: false, message: isEnglishText ? 'Completed.' : '执行完成。' })
-      } else {
+      if (!data.success || !data.runId) {
         setScriptStatus({ running: false, message: isEnglishText ? 'Failed. Check backend logs.' : '执行失败，请查看后端日志。' })
+        return
       }
+      pollRef.current = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`http://localhost:3001/api/scripts/status/${data.runId}`)
+          const statusData = await statusRes.json()
+          if (statusData.output || statusData.errorOutput) {
+            const merged = [
+              ...(statusData.output || []).map(line => `✔ ${line}`),
+              ...(statusData.errorOutput || []).map(line => `✖ ${line}`)
+            ]
+            setScriptLog(merged.slice(-80))
+          }
+          if (statusData.status === 'success') {
+            setScriptStatus({ running: false, message: isEnglishText ? 'Completed.' : '执行完成。' })
+            clearInterval(pollRef.current)
+            pollRef.current = null
+          } else if (statusData.status === 'failed') {
+            setScriptStatus({ running: false, message: isEnglishText ? 'Failed. Check logs.' : '执行失败，请查看日志。' })
+            clearInterval(pollRef.current)
+            pollRef.current = null
+          }
+        } catch (err) {
+          setScriptStatus({ running: false, message: isEnglishText ? 'Failed. Check backend logs.' : '执行失败，请查看后端日志。' })
+          clearInterval(pollRef.current)
+          pollRef.current = null
+        }
+      }, 1000)
     } catch (error) {
       setScriptStatus({ running: false, message: isEnglishText ? 'Failed to run.' : '调用失败。' })
     }
-    setTimeout(() => {
-      setScriptStatus(prev => (prev.running ? prev : { running: false, message: '' }))
-    }, 3000)
   }
 
   const loadMappingSources = async () => {
@@ -475,9 +513,18 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
                     {strings.manageSources}
                   </button>
                 </div>
-                {scriptStatus.message && (
-                  <div className="mt-2 text-[11px] text-white/60">{scriptStatus.message}</div>
-                )}
+                  {scriptStatus.message && (
+                    <div className="mt-2 text-[11px] text-white/60">{scriptStatus.message}</div>
+                  )}
+                  {scriptLog.length > 0 && (
+                    <div className="mt-2 max-h-40 overflow-auto rounded-lg border border-white/10 bg-black/40 p-2 text-[10px] text-white/70 space-y-1">
+                      {scriptLog.map((line, idx) => (
+                        <div key={`${line}-${idx}`} className="whitespace-pre-wrap break-words">
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 {showMapping && (
                   <div className="mt-3 space-y-2">
                     <div className="flex items-center justify-between">
