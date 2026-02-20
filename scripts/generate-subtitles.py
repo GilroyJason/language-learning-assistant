@@ -33,10 +33,14 @@ else:
 # Whisper模型（可通过环境变量覆盖）
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "medium")
 
+# 项目根目录与练习集目录
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PRACTICE_SETS_DIR = PROJECT_ROOT / 'practice-sets'
+
 # 语言映射文件（可通过环境变量覆盖）
 LANGUAGE_MAP_FILE = os.getenv(
     "LANGUAGE_MAP_FILE",
-    str(Path(__file__).resolve().parent / 'practice-sets' / '.language-map.json')
+    str(PRACTICE_SETS_DIR / '.language-map.json')
 )
 
 # 默认语言（可通过环境变量覆盖）
@@ -453,7 +457,7 @@ def batch_process_latest_audio(gpodder_downloads_dir, output_base_dir, limit_per
 if __name__ == '__main__':
     # 配置
     GPODDER_DOWNLOADS = r'C:\Users\ZHAO JUNJIE\Documents\gPodder\Downloads'
-    OUTPUT_DIR = r'D:\german-learning-assistant\practice-sets'
+    OUTPUT_DIR = str(PRACTICE_SETS_DIR)
 
     # 每个音源处理最新N个音频
     practice_sets, total_audio = batch_process_latest_audio(GPODDER_DOWNLOADS, OUTPUT_DIR, limit_per_source=PER_SOURCE_LIMIT)
