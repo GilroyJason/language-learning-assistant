@@ -10,7 +10,7 @@ import { progressTracker } from '../utils/progressTracker'
 const API_BASE = 'http://localhost:3001'
 
 function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
-  const isEnglishText = false
+  const isEnglishText = language === 'en'
   const storagePrefix = language === 'en' ? 'english' : 'german'
     const strings = {
       dictation: isEnglishText ? 'Dictation' : '听写练习',
