@@ -12,11 +12,11 @@ const API_BASE = 'http://localhost:3001'
 function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
   const isEnglishText = false
   const storagePrefix = language === 'en' ? 'english' : 'german'
-  const strings = {
-    dictation: isEnglishText ? 'Dictation' : '听写练习',
-    loading: isEnglishText ? 'Loading practice set...' : '正在加载练习集...',
-    practiceTitle: isEnglishText ? 'Audio Dictation' : '音频听写练习',
-    sentencePrompt: isEnglishText ? 'Complete this sentence' : '请用德语完成这个句子',
+    const strings = {
+      dictation: isEnglishText ? 'Dictation' : '听写练习',
+      loading: isEnglishText ? 'Loading practice set...' : '正在加载练习集...',
+      practiceTitle: isEnglishText ? 'Audio Dictation' : '音频听写练习',
+      sentencePrompt: isEnglishText ? '请用英语完成这个句子' : '请用德语完成这个句子',
     correct: isEnglishText ? 'Great!' : '🎉 太棒了！',
     incorrect: isEnglishText ? 'Keep going!' : '💪 继续加油！',
     correctSub: isEnglishText ? 'All correct, next one' : '完全正确，准备下一题',
@@ -86,10 +86,12 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
           return
         }
 
-        const lessonData = sentences.map(sentence => ({
+        const lessonData = sentences.map(sentence => {
+          const sentenceText = sentence.german || sentence.text || sentence.english || ''
+          return {
           id: `${practiceSet.practiceId}-${sentence.id}`,
           promptZh: strings.dictation,
-          answerDeTokens: sentence.german.split(' ').map(token => {
+          answerDeTokens: sentenceText.split(' ').map(token => {
             const cleanToken = token.replace(/[.,!?]/g, '')
             return {
               text: cleanToken,
@@ -97,11 +99,12 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
             }
           }),
           audioUrl: null,
-          hints: sentence.german,
+          hints: sentenceText,
           originalSentence: sentence,
           start: sentence.start,
           end: sentence.end
-        }))
+        }
+        })
 
         console.log('[SentenceBuilder] 课程数据准备完成，第一课:', lessonData[0])
         setLessons(lessonData)
@@ -288,6 +291,11 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
     if (!currentLesson?.originalSentence) return
 
     const sentenceId = String(currentLesson.originalSentence.id)
+    const sentenceText =
+      currentLesson.originalSentence.german ||
+      currentLesson.originalSentence.text ||
+      currentLesson.originalSentence.english ||
+      ''
     const isFavorite = favoriteSet.has(sentenceId)
     const nextSet = new Set(favoriteSet)
 
@@ -303,15 +311,15 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
         await fetch(`${API_BASE}/api/practice/favorites`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            practiceId: practiceSet.practiceId,
-            sentenceId: sentenceId,
-            german: currentLesson.originalSentence.german,
-            start: currentLesson.start,
-            end: currentLesson.end,
-            audioId: practiceSet.audioId || '',
-            source: practiceSet.source || '',
-            title: practiceSet.title || '',
+            body: JSON.stringify({
+              practiceId: practiceSet.practiceId,
+              sentenceId: sentenceId,
+              german: sentenceText,
+              start: currentLesson.start,
+              end: currentLesson.end,
+              audioId: practiceSet.audioId || '',
+              source: practiceSet.source || '',
+              title: practiceSet.title || '',
             language: language || ''
           })
         })

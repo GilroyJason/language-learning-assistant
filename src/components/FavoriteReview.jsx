@@ -70,7 +70,8 @@ function FavoriteReview({ onHomeClick, language }) {
   }, [favorites, mode])
 
   const currentFav = shuffledFavorites[currentIndex] || null
-  const tokens = currentFav?.german ? currentFav.german.split(' ').map(token => ({
+  const sentenceText = currentFav?.german || currentFav?.text || currentFav?.english || ''
+  const tokens = sentenceText ? sentenceText.split(' ').map(token => ({
     text: token.replace(/[.,!?]/g, ''),
     hasPunctuation: /[.,!?]/.test(token)
   })) : []
