@@ -10,6 +10,8 @@ import sys
 import json
 import re
 import shutil
+import urllib.request
+import urllib.error
 from pathlib import Path
 from datetime import timedelta, datetime
 
@@ -51,6 +53,47 @@ SKIP_EXISTING = os.getenv("SKIP_EXISTING", "1") != "0"
 
 # 是否删除来源音频（生成练习集后）
 DELETE_SOURCE_AUDIO = os.getenv("DELETE_SOURCE_AUDIO", "1") != "0"
+
+# 翻译设置（可通过环境变量覆盖）
+ENABLE_TRANSLATION = os.getenv("ENABLE_TRANSLATION", "1") != "0"
+TRANSLATE_TARGET = os.getenv("TRANSLATE_TARGET", "zh")
+TRANSLATE_API_URL = os.getenv("TRANSLATE_API_URL", "http://localhost:5000/translate")
+TRANSLATE_TIMEOUT = float(os.getenv("TRANSLATE_TIMEOUT", "2.5"))
+
+_translation_cache = {}
+
+def translate_text(text, source_lang, target_lang):
+    if not ENABLE_TRANSLATION:
+        return ""
+    if not text:
+        return ""
+    key = (text, source_lang, target_lang)
+    if key in _translation_cache:
+        return _translation_cache[key]
+
+    payload = {
+        "q": text,
+        "source": source_lang,
+        "target": target_lang,
+        "format": "text"
+    }
+
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            TRANSLATE_API_URL,
+            data=data,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=TRANSLATE_TIMEOUT) as resp:
+            raw = resp.read().decode("utf-8")
+            result = json.loads(raw)
+            translated = result.get("translatedText", "") if isinstance(result, dict) else ""
+            _translation_cache[key] = translated
+            return translated
+    except Exception:
+        _translation_cache[key] = ""
+        return ""
 
 def parse_srt_time(time_str):
     """
@@ -255,13 +298,15 @@ def create_practice_set(audio_file, srt_file, output_dir, source_name, language)
     }
 
     for idx, sentence in enumerate(sentences, 1):
+        text = sentence['text'].strip()
+        translation = translate_text(text, language, TRANSLATE_TARGET)
         practice_set['sentences'].append({
             'id': idx,
             'start': sentence['start'],
             'end': sentence['end'],
             'duration': sentence['end'] - sentence['start'],
-            'german': sentence['text'].strip(),
-            'translation': '',  # 可以后续添加翻译
+            'german': text,
+            'translation': translation,
             'completed': False,
             'attempts': 0
         })
@@ -294,6 +339,10 @@ def process_audio_file(audio_file_path, output_base_dir, source_name, model, lan
         if os.path.exists(existing_json):
             print(f"Skip (exists): {audio_path.name}")
             return None
+
+    if ENABLE_TRANSLATION:
+        print(f"翻译已开启: {language} -> {TRANSLATE_TARGET}")
+        print(f"翻译接口: {TRANSLATE_API_URL}")
 
     # 步骤1: 生成字幕
     if not generate_subtitle(audio_file_path, output_dir, model, language):
