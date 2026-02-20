@@ -18,6 +18,7 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
     startReviewSub: isEnglishText ? 'Practice from favorite sentences' : '从收藏句子题库开始复习',
     shortcuts: isEnglishText ? 'Shortcuts' : '快捷键',
     answer: isEnglishText ? 'Answer' : '答案',
+    translation: isEnglishText ? 'Translation' : '翻译',
     play: isEnglishText ? 'Play' : '播放',
     submit: isEnglishText ? 'Submit' : '验证',
     nextWord: isEnglishText ? 'Next' : '下词',
@@ -359,10 +360,14 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
               >
                 <h3 className="text-sm font-semibold mb-3">{strings.shortcuts}</h3>
                 <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
-                  <div className="flex items-center justify-between bg-white/5 rounded-lg px-2 py-2">
-                    <span>{strings.answer}</span>
-                    <kbd className="px-2 py-0.5 bg-white/10 rounded border border-white/15">Ctrl+;</kbd>
-                  </div>
+                    <div className="flex items-center justify-between bg-white/5 rounded-lg px-2 py-2">
+                      <span>{strings.answer}</span>
+                      <kbd className="px-2 py-0.5 bg-white/10 rounded border border-white/15">Ctrl+;</kbd>
+                    </div>
+                    <div className="flex items-center justify-between bg-white/5 rounded-lg px-2 py-2">
+                      <span>{strings.translation}</span>
+                      <kbd className="px-2 py-0.5 bg-white/10 rounded border border-white/15">Ctrl+'</kbd>
+                    </div>
                   <div className="flex items-center justify-between bg-white/5 rounded-lg px-2 py-2">
                     <span>{strings.play}</span>
                     <kbd className="px-2 py-0.5 bg-white/10 rounded border border-white/15">Ctrl+P</kbd>

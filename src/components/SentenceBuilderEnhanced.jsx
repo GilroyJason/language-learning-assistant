@@ -37,6 +37,7 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
   const [feedback, setFeedback] = useState(null)
   const [score, setScore] = useState(0)
   const [showAnswers, setShowAnswers] = useState(false)
+  const [showTranslation, setShowTranslation] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isCompleted, setIsCompleted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -147,7 +148,8 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
       setUserInputs(new Array(lessons[currentIndex]?.answerDeTokens.length || 0).fill(''))
       setCurrentWordIndex(0)
       setFeedback(null)
-      setShowAnswers(false)
+        setShowAnswers(false)
+        setShowTranslation(false)
       setIsCompleted(false)
     }
   }, [currentIndex, lessons])
@@ -332,12 +334,19 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
       return
     }
 
-    if (e.ctrlKey && (e.key === ';' || e.key === '；' || e.code === 'Semicolon')) {
-      e.preventDefault()
-      e.stopPropagation()
-      setShowAnswers(prev => !prev) // 切换显示/隐藏答案
-      return
-    }
+      if (e.ctrlKey && (e.key === ';' || e.key === '；' || e.code === 'Semicolon')) {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowAnswers(prev => !prev) // 切换显示/隐藏答案
+        return
+      }
+
+      if (e.ctrlKey && (e.key === "'" || e.key === '’' || e.code === 'Quote')) {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowTranslation(prev => !prev)
+        return
+      }
 
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -430,6 +439,13 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
         return
       }
 
+      if (e.ctrlKey && (e.key === "'" || e.key === '’' || e.code === 'Quote')) {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowTranslation(prev => !prev)
+        return
+      }
+
       // Ctrl + P 播放音频（全局）
       if (e.ctrlKey && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault()
@@ -463,9 +479,13 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
     }, 200)
   }, [currentIndex, playAudio])
 
-  const toggleShowAnswers = () => {
-    setShowAnswers(!showAnswers)
-  }
+    const toggleShowAnswers = () => {
+      setShowAnswers(!showAnswers)
+    }
+
+    const toggleShowTranslation = () => {
+      setShowTranslation(!showTranslation)
+    }
 
   const goPrevious = () => {
     if (currentIndex > 0) {
@@ -587,14 +607,19 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
       <main className="container mx-auto px-6 pt-32 pb-32 h-screen flex flex-col items-center justify-center overflow-y-auto">
         <div className="max-w-5xl mx-auto w-full">
           {/* 中文题干 */}
-          <div className="text-center mb-20 animate-slide-in-up">
-            <div className={`inline-block ${darkMode ? 'bg-dark-card/50 border-dark-border' : 'bg-white/50 border-gray-200'} backdrop-blur-sm px-8 py-6 rounded-2xl border`}>
-              <p className={`text-4xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {strings.sentence} {currentIndex + 1} / {total}
-              </p>
-              <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>{strings.sentencePrompt}</p>
+            <div className="text-center mb-20 animate-slide-in-up">
+              <div className={`inline-block ${darkMode ? 'bg-dark-card/50 border-dark-border' : 'bg-white/50 border-gray-200'} backdrop-blur-sm px-8 py-6 rounded-2xl border`}>
+                <p className={`text-4xl font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                  {strings.sentence} {currentIndex + 1} / {total}
+                </p>
+                <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>{strings.sentencePrompt}</p>
+                {showTranslation && (
+                  <p className={`mt-3 text-base ${darkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                    {currentLesson?.originalSentence?.chinese || currentLesson?.originalSentence?.translation || '暂无翻译'}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
 
           {/* 分词输入 */}
           <div className="flex flex-wrap justify-center gap-6 mb-16">
@@ -624,8 +649,7 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
                       type="text"
                       value={showAnswers ? token.text : userInput}
                       onChange={(e) => handleInputChange(index, e.target.value)}
-                      onKeyDownCapture={(e) => handleKeyDown(e, index)}
-                      onKeyDown={(e) => handleKeyDown(e, index)}
+                        onKeyDown={(e) => handleKeyDown(e, index)}
                       className={`
                         px-6 py-4 text-2xl font-medium min-w-[140px] text-center
                         border-b-4 outline-none transition-all duration-300 bg-transparent
@@ -722,16 +746,25 @@ function SentenceBuilderEnhanced({ practiceSet, onHomeClick, language }) {
                   <span>{strings.submit}</span>
                 </span>
               </button>
-              <button
-                onClick={toggleShowAnswers}
-                className={`px-5 py-3 rounded-xl text-sm transition-all duration-200 border hover:scale-105 ${darkMode ? 'bg-dark-card hover:bg-dark-surface text-gray-300 border-dark-border hover:border-purple-500/50' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200'}`}
-              >
-                <span className="flex items-center space-x-2">
-                  <kbd className={`px-2 py-1 rounded border text-xs ${darkMode ? 'bg-dark-surface text-gray-400 border-dark-border' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>Ctrl+;</kbd>
-                  <span>{showAnswers ? (isEnglishText ? 'Hide' : '隐藏') : strings.answer}</span>
-                </span>
-              </button>
-            </div>
+                <button
+                  onClick={toggleShowAnswers}
+                  className={`px-5 py-3 rounded-xl text-sm transition-all duration-200 border hover:scale-105 ${darkMode ? 'bg-dark-card hover:bg-dark-surface text-gray-300 border-dark-border hover:border-purple-500/50' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200'}`}
+                >
+                  <span className="flex items-center space-x-2">
+                    <kbd className={`px-2 py-1 rounded border text-xs ${darkMode ? 'bg-dark-surface text-gray-400 border-dark-border' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>Ctrl+;</kbd>
+                    <span>{showAnswers ? (isEnglishText ? 'Hide' : '隐藏') : strings.answer}</span>
+                  </span>
+                </button>
+                <button
+                  onClick={toggleShowTranslation}
+                  className={`px-5 py-3 rounded-xl text-sm transition-all duration-200 border hover:scale-105 ${darkMode ? 'bg-dark-card hover:bg-dark-surface text-gray-300 border-dark-border hover:border-purple-500/50' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200'}`}
+                >
+                  <span className="flex items-center space-x-2">
+                    <kbd className={`px-2 py-1 rounded border text-xs ${darkMode ? 'bg-dark-surface text-gray-400 border-dark-border' : 'bg-gray-200 text-gray-600 border-gray-300'}`}>Ctrl+'</kbd>
+                    <span>{showTranslation ? (isEnglishText ? 'Hide' : '隐藏翻译') : (isEnglishText ? 'Translation' : '显示翻译')}</span>
+                  </span>
+                </button>
+              </div>
 
             <button
               onClick={goNext}
