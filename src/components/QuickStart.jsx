@@ -39,6 +39,8 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
     tools: isEnglishText ? 'Tools' : '工具',
     updateSets: isEnglishText ? 'Update sets' : '更新题库',
     subscribe: isEnglishText ? 'Subscribe RSS' : '订阅RSS',
+    translateStart: isEnglishText ? 'Start Translate' : '启动翻译',
+    translateStop: isEnglishText ? 'Stop Translate' : '停止翻译',
     manageSources: isEnglishText ? 'Manage sources' : '管理音源',
     noSources: isEnglishText ? 'No sources found' : '暂无音源',
     unknown: isEnglishText ? 'Unknown sources' : '未知音源',
@@ -499,6 +501,20 @@ function QuickStart({ onStartLearning, onStartReview, language }) {
                     className="px-3 py-2 rounded-full bg-white/10 text-white text-xs border border-white/10 disabled:opacity-50"
                   >
                     {strings.subscribe}
+                  </button>
+                  <button
+                    disabled={scriptStatus.running}
+                    onClick={() => runScript('start-translate')}
+                    className="px-3 py-2 rounded-full bg-white/10 text-white text-xs border border-white/10 disabled:opacity-50"
+                  >
+                    {strings.translateStart}
+                  </button>
+                  <button
+                    disabled={scriptStatus.running}
+                    onClick={() => runScript('stop-translate')}
+                    className="px-3 py-2 rounded-full bg-white/10 text-white text-xs border border-white/10 disabled:opacity-50"
+                  >
+                    {strings.translateStop}
                   </button>
                   <button
                     onClick={async () => {

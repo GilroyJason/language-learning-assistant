@@ -650,7 +650,9 @@ const scriptRegistry = {
   'auto-daily-en': path.join(__dirname, 'scripts', 'bat', 'auto-daily-en.bat'),
   'subscribe-now': path.join(__dirname, 'scripts', 'bat', 'subscribe-now.bat'),
   'subscribe-de': path.join(__dirname, 'scripts', 'bat', 'subscribe-german.bat'),
-  'subscribe-en': path.join(__dirname, 'scripts', 'bat', 'subscribe-english.bat')
+  'subscribe-en': path.join(__dirname, 'scripts', 'bat', 'subscribe-english.bat'),
+  'start-translate': path.join(__dirname, 'scripts', 'bat', 'start-libretranslate.bat'),
+  'stop-translate': path.join(__dirname, 'scripts', 'bat', 'stop-libretranslate.bat')
 }
 
 const scriptRuns = new Map()
